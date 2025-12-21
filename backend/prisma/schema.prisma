@@ -1,0 +1,66 @@
+// backend/prisma/schema.prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum Status {
+  TODO
+  IN_PROGRESS
+  REVIEW
+  COMPLETED
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String
+  password      String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  tasksCreated  Task[]   @relation("TasksCreated")
+  tasksAssigned Task[]   @relation("TasksAssigned")
+
+  notifications Notification[]
+}
+
+model Task {
+  id           String    @id @default(cuid())
+  title        String    @db.VarChar(100)
+  description  String
+  dueDate      DateTime
+  priority     Priority
+  status       Status     @default(TODO)
+
+  creatorId    String
+  creator      User      @relation("TasksCreated", fields: [creatorId], references: [id])
+
+  assignedToId String?
+  assignedTo   User?     @relation("TasksAssigned", fields: [assignedToId], references: [id])
+
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  type      String   // e.g., "TASK_ASSIGNED"
+  message   String
+  taskId    String?
+  createdAt DateTime @default(now())
+  read      Boolean  @default(false)
+}
