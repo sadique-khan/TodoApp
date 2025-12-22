@@ -1,5 +1,4 @@
 import express, {Express,Request,Response} from 'express'
-import { log } from 'node:console'
 import { authRoutes } from './routers/authRoute';
 import { errorHandler } from './middleware/errorHandler';
 import dotenv from 'dotenv'
@@ -43,5 +42,25 @@ app.use('/api/tasks',requireAuth,taskRouter);
 app.use('/api/notifications',notificationRouter)
 app.use(errorHandler);
 
-server.listen(3000,()=>{console.log("server is running");
-})
+async function startServer() {
+  try {
+    await prismaClient.$connect();
+    console.log('Connected to database');
+
+    server.listen(3000, () => {
+      console.log('Server is running on port 3000');
+    });
+  } catch (err) {
+    console.error('Failed to connect to database:', err);
+    process.exit(1);
+  }
+}
+
+// Graceful shutdown
+process.on('SIGINT', async () => {
+  await prismaClient.$disconnect();
+  console.log('Prisma disconnected');
+  process.exit(0);
+});
+
+startServer();
