@@ -9,7 +9,8 @@ const schema = z.object({
   dueDate: z.string().min(1, "Due date is required"),
   priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]),
   status: z.enum(["TODO", "IN_PROGRESS", "REVIEW", "COMPLETED"]),
-  assignedToId: z.string().optional()
+  assignedToId: z.string().optional(),
+  assignedToUserEmail: z.string().optional()
 });
 
 type FormData = z.infer<typeof schema>;
@@ -33,7 +34,8 @@ export default function TaskForm({ defaultValues, onSubmit, submitLabel = "Save 
       dueDate: defaultValues?.dueDate ? defaultValues.dueDate.slice(0, 10) : "",
       priority: (defaultValues?.priority as Priority) ?? "MEDIUM",
       status: (defaultValues?.status as Status) ?? "TODO",
-      assignedToId: defaultValues?.assignedToId ?? ""
+      assignedToId: defaultValues?.assignedToId ?? "",
+      assignedToUserEmail: defaultValues?.assignedToUserEmail ?? ""
     }
   });
 
@@ -44,7 +46,8 @@ export default function TaskForm({ defaultValues, onSubmit, submitLabel = "Save 
       dueDate: new Date(data.dueDate).toISOString(),
       priority: data.priority.toUpperCase() as Priority,
       status: data.status.toUpperCase().replace(" ","_") as Status,
-      assignedToId: data.assignedToId || undefined
+      assignedToId: data.assignedToId || undefined,
+      assignedToUserEmail: data.assignedToUserEmail || undefined
     });
   };
 
@@ -92,8 +95,8 @@ export default function TaskForm({ defaultValues, onSubmit, submitLabel = "Save 
 
 
       <div>
-        <label className="block font-medium">Assigned To (User ID)</label>
-        <input {...register("assignedToId")} className="w-full border rounded px-3 py-2" placeholder="Optional user ID" />
+        <label className="block font-medium">Assigned To (User Email)</label>
+        <input {...register("assignedToUserEmail")} className="w-full border rounded px-3 py-2" placeholder="Optional user ID" />
       </div>
 
       <button

@@ -10,6 +10,7 @@ export interface Task {
   status: Status;
   creatorId: string;
   assignedToId: string;
+  assignedToUserEmail:string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -21,6 +22,7 @@ export interface TaskCreateInput {
   priority: Priority;
   status: Status;
   assignedToId?: string;
+  assignedToUserEmail?:string;
 }
 
 export interface TaskUpdateInput {
@@ -30,4 +32,5 @@ export interface TaskUpdateInput {
   priority?: Priority;
   status?: Status;
   assignedToId?: string;
+  assignedToUserEmail?:string;
 }

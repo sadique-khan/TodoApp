@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useTask, useUpdateTask, useDeleteTask } from "../hooks/useTasks";
 import TaskForm from "../components/TaskForm";
 import { useEffect } from "react";
@@ -9,7 +9,7 @@ export default function TaskDetailPage() {
   const { data: task, isLoading } = useTask(id);
   const { mutateAsync: updateTask } = useUpdateTask(id);
   const { mutateAsync: deleteTask } = useDeleteTask();
-
+  const navigate = useNavigate();
   useEffect(() => {
     if (!id) return;
     socket.emit("join", { room: `task:${id}` });
@@ -36,8 +36,14 @@ export default function TaskDetailPage() {
           <button
             className="rounded bg-red-600 px-3 py-1.5 text-white hover:bg-red-700"
             onClick={async () => {
-              await deleteTask(task.id);
-              history.back();
+              await deleteTask(task.id,{
+                onSuccess:() =>{
+                  navigate('/dashboard',{replace:true})
+                }
+              }
+
+              );
+              
             }}
           >
             Delete

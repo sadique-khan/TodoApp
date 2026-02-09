@@ -12,6 +12,7 @@ const TaskDTO = z.object({
   priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]),
   status: z.enum(["TODO", "IN_PROGRESS", "REVIEW", "COMPLETED"]).optional(),
   assignedToId: z.string().nullable().optional(),
+  assignedToUserEmail: z.string().nullable().optional(),
 });
 
 export const taskRouter = Router();
@@ -20,7 +21,14 @@ export const taskRouter = Router();
 taskRouter.post("/", async (req: Request, res: Response) => {
   const parsed = TaskDTO.parse(req.body);
   const creatorId = (req as any).userId;
-
+  if(parsed.assignedToUserEmail){
+    const assginedTo = await prismaClient.user.findFirst({where : {email:parsed.assignedToUserEmail}})
+    if(!assginedTo){
+      return res.status(404).json({error:"Assined User not found"})
+    }
+    parsed.assignedToId = assginedTo.id
+  };
+  
   const task = await prismaClient.task.create({
     data: { ...parsed, creatorId },
   });
@@ -33,6 +41,7 @@ taskRouter.post("/", async (req: Request, res: Response) => {
   if (task.assignedToId) {
     await NotificationService.create({
       userId: task.assignedToId,
+      userEmail : task.assignedToUserEmail,
       type: "TASK_ASSIGNED",
       message: `You were assigned to task "${task.title}".`,
       taskId: task.id,
@@ -69,6 +78,9 @@ taskRouter.patch("/:id", async (req: Request, res: Response) => {
   if (!("assignedToId" in req.body)) {
   parsed.assignedToId = null;
 }
+  if (!("assignedToUserEmail" in req.body)) {
+  parsed.assignedToUserEmail = null;
+}
 
 
   const before = await prismaClient.task.findUnique({ where: { id } });
@@ -84,6 +96,7 @@ taskRouter.patch("/:id", async (req: Request, res: Response) => {
   if (before?.assignedToId !== updated.assignedToId && updated.assignedToId) {
     await NotificationService.create({
       userId: updated.assignedToId,
+      userEmail : updated.assignedToUserEmail,
       type: "TASK_ASSIGNED",
       message: `You were assigned to task "${updated.title}".`,
       taskId: updated.id,

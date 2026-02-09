@@ -2,7 +2,7 @@ import { prismaClient } from "..";
 import { io } from "../realtime/socket";
 
 export const NotificationService = {
-  async create(data: { userId: string; type: string; message: string; taskId?: string }) {
+  async create(data: { userId: string; userEmail: string; type: string; message: string; taskId?: string }) {
     const notification = await prismaClient.notification.create({ data });
 
     // 🔔 Emit real-time notification to the user’s room
