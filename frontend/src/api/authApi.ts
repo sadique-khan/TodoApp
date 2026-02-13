@@ -18,7 +18,7 @@ export const register = async (name: string, email: string, password: string): P
 
 export const getStoredUser = (): User | null => {
   const stored = localStorage.getItem("user");
-  return stored ? JSON.parse(stored) : null;
+  return (stored && stored !== "undefined") ? JSON.parse(stored) : null;
 };
 
 export const logout = async (): Promise<void> => {
