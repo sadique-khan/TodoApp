@@ -1,6 +1,5 @@
 // src/api/notificationApi.ts
 import { AxiosInstance } from "axios";
-import { Notification } from "../hooks/useSocketNotifications";
 
 // Fetch all notifications for the logged-in user
 export const getNotifications = async (api: AxiosInstance) => {
