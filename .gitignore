@@ -1,2 +1,5 @@
 node_modules
 .env
+*secret*.yml
+*K8s*
+*docker*

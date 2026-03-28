@@ -37,6 +37,9 @@ app.use(cookieParser());
 app.get('/',(req:Request,res:Response)=>{
     res.send('Hello World')
 });
+app.get('/api',(req:Request,res:Response)=>{
+    res.send('Hello World')
+});
 app.use('/api/auth',authRoutes);
 app.use('/api/tasks',requireAuth,taskRouter);
 app.use('/api/notifications',notificationRouter)
