@@ -35,17 +35,28 @@ Base URL,http://localhost:3000/api
 Content-Type,application/json
 Authentication,JWT via Cookies (HttpOnly) & requireAuth Middleware
 
-USER ROUTES 
+USER ROUTES, /auth
+
+
 POST,/register,Create a new user account,
+
 POST,/login,Authenticate user and set cookies,
+
 POST,/refresh,Refresh expired access tokens,
+
 POST,/logout,Clear session cookies
 
-TASK ROUTES
+
+
+TASK ROUTES,/
+
 
  Create Task,POST /tasks,
+
  List Tasks,GET /tasks,
+
  Update Task,PATCH /tasks/:id
+
  Delete Task,DELETE /tasks/:id
 
 
