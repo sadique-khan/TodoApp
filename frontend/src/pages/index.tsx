@@ -1,7 +1,8 @@
 import { useAuth } from "../context/AuthContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
+import { api } from "../api/client";
 
 export default function Landing() {
   const { user, accessToken, login, register } = useAuth();
@@ -10,6 +11,9 @@ export default function Landing() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState("");
   const [isLoading,setLoading] = useState(false);
+  useEffect(() => {
+    api.get('').catch(()=>{});
+  }, []);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
